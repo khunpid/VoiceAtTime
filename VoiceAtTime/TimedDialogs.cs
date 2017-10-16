@@ -72,11 +72,7 @@ namespace VoiceAtTime
 
                     if (functionRun) return;
 
-                    Console.WriteLine($"{DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss.fff")} Speaking: {parsedWithVariables.Speech}");
-                    if (parsedWithVariables.IsSync)
-                        synthesizer.Speak(parsedWithVariables.Speech);
-                    else
-                        synthesizer.SpeakAsync(parsedWithVariables.Speech);
+                    TimedDialogs.SpeakString(synthesizer, parsedWithVariables);
                 }
                 catch (Exception ex)
                 {
@@ -89,6 +85,24 @@ namespace VoiceAtTime
 
             Console.WriteLine($"{DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss.fff")} Speaking: Bye");
             synthesizer.Speak("Bye");
+        }
+
+        public static bool SpeakString(SpeechSynthesizer synthesizer, (TimeType TimeType, TimeSpan AtTime, string Speech, bool IsSync) parsedWithVariables)
+        {
+            try
+            {
+                Console.WriteLine($"{DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss.fff")} Speaking: {parsedWithVariables.Speech}");
+                if (parsedWithVariables.IsSync)
+                    synthesizer.Speak(parsedWithVariables.Speech);
+                else
+                    synthesizer.SpeakAsync(parsedWithVariables.Speech);
+            }
+            catch(Exception ex)
+            {
+                return false;
+            }
+
+            return true;
         }
 
         public static bool RunFunction(SpeechSynthesizer synthesizer, (TimeType TimeType, TimeSpan AtTime, string Speech, bool IsSync) parsedWithVariables, DateTime startDate)

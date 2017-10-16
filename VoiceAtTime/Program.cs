@@ -16,6 +16,10 @@ namespace VoiceAtTime
                 ? args[0].Substring(args[0].IndexOf(':') + 1)
                 : null;
 
+            var speakString = args.Length > 0 && args[0].StartsWith("-speak:")
+                ? args[0].Substring(args[0].IndexOf(':') + 1)
+                : null;
+
             try
             {
                 using (SpeechSynthesizer synthesizer = new SpeechSynthesizer())
@@ -26,12 +30,17 @@ namespace VoiceAtTime
                         return;
                     }
 
+                    if (!string.IsNullOrEmpty(speakString)
+                        && TimedDialogs.SpeakString(synthesizer, (TimeType.Relative, new TimeSpan(), $"{speakString}", true)))
+                    {
+                        return;
+                    }
+
                     var filename = args.Length > 0 && args[0].StartsWith("-inputfile:")
                         ? args[0].Substring(args[0].IndexOf(':') + 1)
                         : "TimedDialogs.txt";
 
                     if (!File.Exists(filename)) return;
-
 
                     var speaker = new TimedDialogs(synthesizer);
                     speaker.Speak(filename);
@@ -45,7 +54,7 @@ namespace VoiceAtTime
 
         private static void ShowUsage()
         {
-            Console.WriteLine(@"Usage: VoiceAtTime.exe [-run:<function with params>|-inputfile:c:\dialog.txt]");
+            Console.WriteLine(@"Usage: VoiceAtTime.exe [-run:""<function with params>""|-speak:""<sentence to speak>""|-inputfile:c:\dialog.txt]");
         }
     }
 }
