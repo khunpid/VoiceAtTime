@@ -1,0 +1,23 @@
+﻿# time dialogs format is
+# Syntax:
+# [+]hh:mm:ss[x] what to speak
+# + for relative offset from the previous
+# if left blank will be absolute offset from the beginning
+# x for time count of the next line starts after finish speaking
+# $TIME parameter will be interpreted at runtime to the current date time
+# Use ^ for predefined function.
+# Currently, we have only Countdown function which accept numbers to countdown from to to and a step
+# wrong syntax line will be ignored
+# # for comment 
+00:00:00 Welcome to Timed Dialogs
++00:00:01x The time is $TIME
++00:00:01 Start working
+#+00:00:30 30 seconds passed
+#+00:00:30 1 minute passed
+#+00:00:30 1 minute 30 seconds passed
+#+00:00:30 2 minute passed
+#+00:00:30 2 minute 30 seconds passed
++00:00:00x ^Countdown 171 31 30
++00:00:20x 10 seconds left 
++00:00:00x ^Countdown 10 0 1
++00:00:00x Complete, Good job Everyone. I knew, you can do it.
