@@ -12,28 +12,40 @@ namespace VoiceAtTime
     {
         public static void Main(string[] args)
         {
-            if (args.Length > 1)
+            var runFunction = args.Length > 0 && args[0].StartsWith("-run:")
+                ? args[0].Substring(args[0].IndexOf(':') + 1)
+                : null;
+
+            try
+            {
+                using (SpeechSynthesizer synthesizer = new SpeechSynthesizer())
+                {
+                    if (!string.IsNullOrEmpty(runFunction)
+                        && TimedDialogs.RunFunction(synthesizer, (TimeType.Relative, new TimeSpan(), $"^{runFunction}", true), DateTime.Now))
+                    {
+                        return;
+                    }
+
+                    var filename = args.Length > 0 && args[0].StartsWith("-inputfile:")
+                        ? args[0].Substring(args[0].IndexOf(':') + 1)
+                        : "TimedDialogs.txt";
+
+                    if (!File.Exists(filename)) return;
+
+
+                    var speaker = new TimedDialogs(synthesizer);
+                    speaker.Speak(filename);
+                }
+            }
+            catch(Exception ex)
             {
                 ShowUsage();
-                return;
-            }
-
-            var filename = args.Length > 0 && args[0].StartsWith("-inputfile:")
-                ? args[0].Substring(args[0].IndexOf(':') + 1)
-                : "TimedDialogs.txt";
-
-            if (!File.Exists(filename)) return;
-
-            using (SpeechSynthesizer synthesizer = new SpeechSynthesizer())
-            {
-                var speaker = new TimedDialogs(synthesizer);
-                speaker.Speak(filename);
             }
         }
 
         private static void ShowUsage()
         {
-            Console.WriteLine(@"Usage: VoiceAtTime.exe -inputfile:c:\dialog.txt");
+            Console.WriteLine(@"Usage: VoiceAtTime.exe [-run:<function with params>|-inputfile:c:\dialog.txt]");
         }
     }
 }

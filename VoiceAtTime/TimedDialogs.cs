@@ -68,7 +68,7 @@ namespace VoiceAtTime
                     var parsedWithVariables = InsertVariable(parsed);
 
                     WaitForTime(startTime, parsedWithVariables.TimeType, parsedWithVariables.AtTime);
-                    var functionRun = RunFunction(parsedWithVariables, DateTime.Now);
+                    var functionRun = RunFunction(synthesizer, parsedWithVariables, DateTime.Now);
 
                     if (functionRun) return;
 
@@ -91,7 +91,7 @@ namespace VoiceAtTime
             synthesizer.Speak("Bye");
         }
 
-        private bool RunFunction((TimeType TimeType, TimeSpan AtTime, string Speech, bool IsSync) parsedWithVariables, DateTime startDate)
+        public static bool RunFunction(SpeechSynthesizer synthesizer, (TimeType TimeType, TimeSpan AtTime, string Speech, bool IsSync) parsedWithVariables, DateTime startDate)
         {
             if (!parsedWithVariables.Speech.StartsWith("^")) return false;
 
